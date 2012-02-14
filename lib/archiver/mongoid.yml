@@ -1,0 +1,22 @@
+development:
+  host: tempest.mongohq.com
+  port: 10066
+  username: vyumixuser 
+  password: vyumixpassword
+  database: vyumixdb-prod
+
+anemone:
+  host: staff.mongohq.com
+  port: 10097
+  username: vyumixuser 
+  password: vyumixpassword
+  database: boxdncdb
+    
+
+production: 
+  host: locke.mongohq.com
+  port: 10035
+  username: vyumixuser 
+  password: vyumixpassword
+  database: vyumix-prod-2
+
