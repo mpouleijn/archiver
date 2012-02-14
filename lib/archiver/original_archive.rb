@@ -47,14 +47,8 @@ module S3
 						if size == video.s3_file_size
 
 							$logger.debug "xx Deleting from s3."
-
-							split_link = link.split("/")	
-							object = split_link[-1]
-							bucket = split_link[-2]
-							@aws_s3 = Amazon::S3.new(bucket)
-	    					@aws_s3.connect
-	    					@aws_s3.delete_s3_url(object)
-
+							delete_from_s3(video.s3_url)
+							delete_from_s3(video.download_url) if video.download_url.include?("feed-video-original/")
 							$logger.debug "xx Deleted from s3."
 
 						end
@@ -66,6 +60,16 @@ module S3
 				$logger.error e.message
 				$logger.error e.backtrace
 			end
+		end
+
+		def delete_from_s3(link)
+			link = video.download_url
+	    	split_link = link.split("/")	
+			object = split_link[-1]
+			bucket = split_link[-2]
+	    	@aws_s3 = Amazon::S3.new(bucket)
+	    	@aws_s3.connect
+	    	@aws_s3.delete_s3_url(object)
 		end
 
 

@@ -2,8 +2,7 @@ module S3
 
 	class Download
 
-		PARENT_DIR = "/tmp"
-
+		
 		def initialize(options={})
 			@directory = options[:dir]
 			@link = options[:link]

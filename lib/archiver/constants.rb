@@ -3,7 +3,7 @@ module Constants
   # Original media files
   ORIGINAL =  {
     :field => "s3_url",
-    :dir => "/tmp",
+    :dir => "/mnt/Video_Archive/media-original",
     :update => "original_archived"
   }
   
