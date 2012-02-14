@@ -30,8 +30,8 @@ module Amazon
     end
 
     def delete_s3_url(name)
-      object = @objectS3.find name.to_s, @bucket.to_s
-      $logger.debug object.about
+      object = @objectS3.delete name.to_s, @bucket.to_s
+      return true
     rescue Exception => e
       $logger.error "-> Error retrieving s3 url. #{e.message}"
       return nil

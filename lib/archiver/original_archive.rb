@@ -1,4 +1,5 @@
 require 'aws/s3'
+require "net/http"
 
 module S3
 	
@@ -31,6 +32,12 @@ module S3
 
 					link = video.s3_url
 
+					unless link_exists(link, video)
+						video.original_archived = true
+						video.save
+						next
+					end
+
 					extension = get_extension(link)
     				file_name = @dir + "/" + video._id.to_s + extension
 					
@@ -47,10 +54,13 @@ module S3
 						if size == video.s3_file_size
 
 							$logger.debug "xx Deleting from s3."
-							delete_from_s3(video.s3_url)
+							flag = delete_from_s3(video.s3_url)
 							delete_from_s3(video.download_url) if video.download_url.include?("feed-video-original/")
 							$logger.debug "xx Deleted from s3."
-
+							if flag
+								video.original_archived = true
+								video.save
+							end
 						end
 					end
 
@@ -62,9 +72,19 @@ module S3
 			end
 		end
 
+		def link_exists(link, video)
+			url = URI.parse(link)
+			req = Net::HTTP.new(url.host, url.port)
+			res = req.request_head(url.path)
+			if res.code == 200
+				return true
+			else
+				return false
+			end
+		end
+
 		def delete_from_s3(link)
-			link = video.download_url
-	    	split_link = link.split("/")	
+			split_link = link.split("/")	
 			object = split_link[-1]
 			bucket = split_link[-2]
 	    	@aws_s3 = Amazon::S3.new(bucket)
@@ -74,7 +94,7 @@ module S3
 
 
 		def get_videos
-			videos = Video.where(@update => nil, :state => "active").only(:_id, @field, @update, :download_url, :s3_file_size).asc(:updated_at).limit(5000)
+			videos = Video.where(@update => nil, :state => "active").only(:_id, @field, @update, :download_url, :s3_file_size).asc(:updated_at).limit(1000)
 			videos
 		end
 
