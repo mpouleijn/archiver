@@ -74,7 +74,7 @@ module S3
 
 
 		def get_videos
-			videos = Video.where(@update => nil, :state => "active").only(:_id, @field, @update, :download_url, :s3_file_size).limit(5000)
+			videos = Video.where(@update => nil, :state => "active").only(:_id, @field, @update, :download_url, :s3_file_size).asc(:updated_at).limit(5000)
 			videos
 		end
 
